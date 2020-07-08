@@ -4,22 +4,11 @@ module.exports = function( api ) {
 	return {
 		presets: [ '@wordpress/babel-preset-default' ],
 		plugins: [
-			'@babel/plugin-transform-async-to-generator',
-			'transform-class-properties',
-			[
-				'@babel/transform-react-jsx',
-				{
-					pragma: 'createElement',
-				},
-			],
-			[
-				'@wordpress/babel-plugin-import-jsx-pragma',
-				{
-					scopeVariable: 'createElement',
-					source: '@wordpress/element',
-					isDefault: false,
-				},
-			],
+			/**
+			 * This allows arrow functions as class methods so that binding
+			 * methods to `this` in the constructor isn't required.
+			 */
+			'@babel/plugin-proposal-class-properties',
 		],
 		env: {
 			production: {
