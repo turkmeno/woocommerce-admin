@@ -523,9 +523,14 @@
 		padding: 4px;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		width: 600px;
+		width: 880px;
 		max-width: 100%;
 		font-size: 14px;
+
+		@include breakpoint( '<960px' ) {
+			width: 500px;
+			grid-template-columns: 1fr;
+		}
 
 		.woocommerce-business-extensions__benefit {
 			padding: 10px;
