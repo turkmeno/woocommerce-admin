@@ -46,7 +46,6 @@ export function recordTaskViewEvent(
 
 export function getAllTasks( {
 	profileItems,
-	taskListPayments,
 	query,
 	toggleCartModal,
 	activePlugins,
@@ -56,17 +55,21 @@ export function getAllTasks( {
 	isJetpackConnected,
 } ) {
 	const {
+		hasPaymentGateway,
 		hasPhysicalProducts,
 		hasProducts,
 		isAppearanceComplete,
 		isTaxComplete,
 		shippingZonesCount,
+		wcPayIsConnected,
 	} = getSetting( 'onboarding', {
+		hasPaymentGateway: false,
 		hasPhysicalProducts: false,
 		hasProducts: false,
 		isAppearanceComplete: false,
 		isTaxComplete: false,
 		shippingZonesCount: 0,
+		wcPayIsConnected: false,
 	} );
 
 	const productIds = getProductIdsForCart(
@@ -78,13 +81,6 @@ export function getAllTasks( {
 		profileItems,
 		false,
 		installedPlugins
-	);
-
-	const paymentsCompleted = Boolean(
-		taskListPayments && taskListPayments.completed
-	);
-	const paymentsSkipped = Boolean(
-		taskListPayments && taskListPayments.skipped
 	);
 
 	const woocommercePaymentsInstalled =
@@ -142,7 +138,7 @@ export function getAllTasks( {
 			key: 'woocommerce-payments',
 			title: __( 'Set up WooCommerce Payments', 'woocommerce-admin' ),
 			container: <Fragment />,
-			completed: paymentsCompleted || paymentsSkipped,
+			completed: wcPayIsConnected,
 			onClick: async () => {
 				await new Promise( ( resolve, reject ) => {
 					// This task doesn't have a view, so the recordEvent call
@@ -173,12 +169,12 @@ export function getAllTasks( {
 			key: 'payments',
 			title: __( 'Set up payments', 'woocommerce-admin' ),
 			container: <Payments />,
-			completed: paymentsCompleted || paymentsSkipped,
+			completed: hasPaymentGateway,
 			onClick: () => {
 				recordEvent( 'tasklist_click', {
 					task_name: 'payments',
 				} );
-				if ( paymentsCompleted || paymentsSkipped ) {
+				if ( hasPaymentGateway ) {
 					window.location = getAdminLink(
 						'admin.php?page=wc-settings&tab=checkout'
 					);
